@@ -4,6 +4,7 @@ import {
   StyleSheet,
   ScrollView,
   View,
+  Dimensions,
   Text,
   RefreshControl,
   StatusBar,
@@ -18,6 +19,8 @@ const zeroconf = new Zeroconf();
 const sunny = require('./src/images/sunny.jpg');
 const cloudy = require('./src/images/cloudy.jpg');
 const night = require('./src/images/night.jpg');
+
+const {imgWidth, imgHeight} = Image.resolveAssetSource(sunny);
 
 const cloudIcon = require('./src/images/icons/cloud.png');
 const moonIcon = require('./src/images/icons/moon.png');
@@ -73,21 +76,23 @@ const App = () => {
               progressViewOffset={20}
             />
           }>
-          <ImageBackground source={cloudy} style={styles.bgImg}>
-            <Image style={styles.icon} source={sunnyIcon} />
-            {tempResponse ? (
-              <>
-                <Text style={styles.tempTxt}>
-                  {Math.round(tempResponse.temperature)}°
-                </Text>
-                <Text style={styles.humidityTxt}>
-                  Humidity {Math.round(tempResponse.humidity)}%
-                </Text>
-              </>
-            ) : (
-              <ActivityIndicator size="large" color="#0000ff" />
-            )}
-          </ImageBackground>
+          {/* <ImageBackground source={cloudy} style={styles.bgImg}> */}
+          <Image source={sunny} style={styles.bgImg} />
+
+          <Image style={styles.icon} source={sunnyIcon} />
+          {tempResponse ? (
+            <>
+              <Text style={styles.tempTxt}>
+                {Math.round(tempResponse.temperature)}°
+              </Text>
+              <Text style={styles.humidityTxt}>
+                Humidity {Math.round(tempResponse.humidity)}%
+              </Text>
+            </>
+          ) : (
+            <ActivityIndicator size="large" color="#0000ff" />
+          )}
+          {/* </ImageBackground> */}
         </ScrollView>
       </SafeAreaView>
     </>
@@ -97,11 +102,11 @@ const App = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#74b9ff',
+    backgroundColor: 'black',
   },
   scrollView: {
     alignItems: 'center',
-    justifyContent: 'center',
+    // justifyContent: 'center',
     height: '100%',
   },
   tempTxt: {
@@ -127,10 +132,14 @@ const styles = StyleSheet.create({
 
   bgImg: {
     flex: 1,
+    position: 'absolute',
+    top: 0,
     alignItems: 'center',
     width: '100%',
-    height: 'auto',
-    // resizeMode: 'cover',
+    height: "100%",
+    aspectRatio: 1125/2436,
+    resizeMode: 'cover',
+    opacity: .8, 
   },
   icon: {
     width: 100,
