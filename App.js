@@ -14,13 +14,14 @@ import {
 } from 'react-native';
 
 import Zeroconf from 'react-native-zeroconf';
+import PushNotification from 'react-native-push-notification';
 const zeroconf = new Zeroconf();
+
+// all the images and icons here
 
 const sunny = require('./src/images/sunny.jpg');
 const cloudy = require('./src/images/cloudy.jpg');
 const night = require('./src/images/night.jpg');
-
-const {imgWidth, imgHeight} = Image.resolveAssetSource(sunny);
 
 const cloudIcon = require('./src/images/icons/cloud.png');
 const moonIcon = require('./src/images/icons/moon.png');
@@ -32,13 +33,23 @@ const App = () => {
   const espURL = useRef(null);
 
   const fetchTemp = useCallback(() => {
-    setRefreshing(true); //we will set the refresing true till we fetch the data
+    setRefreshing(true);
     fetch(espURL.current)
       .then(response => response.json())
       .then(data => {
         console.log(data);
         setTempResponse(data);
+        //we will set the refresing false after the data is fetched
         setRefreshing(false);
+
+        //will also send local push when we get new data
+        PushNotification.localNotification({
+          ignoreInForeground: false,
+          title: `Current Room Temp 🌡 ${data.temperature}℃`,
+          message: `Temperatue ${data.temperature}℃ Humidity ${data.humidity}%`, // (required)
+          playSound: false,
+          number: 3,
+        });
       });
   }, [espURL]);
 
@@ -58,6 +69,21 @@ const App = () => {
         fetchTemp();
       }
     });
+
+    PushNotification.configure({
+      // (optional) Called when Token is generated (iOS and Android)
+      onRegister: function(token) {
+        console.log('TOKEN:', token);
+      },
+
+      onNotification: function(notification) {
+        console.log('NOTIFICATION:', notification);
+      },
+
+      popInitialNotification: true,
+      requestPermissions: false,
+    });
+
     return () => {
       zeroconf.removeAllListeners();
     };
@@ -76,7 +102,6 @@ const App = () => {
               progressViewOffset={20}
             />
           }>
-          {/* <ImageBackground source={cloudy} style={styles.bgImg}> */}
           <Image source={sunny} style={styles.bgImg} />
 
           <Image style={styles.icon} source={sunnyIcon} />
@@ -89,10 +114,7 @@ const App = () => {
                 Humidity {Math.round(tempResponse.humidity)}%
               </Text>
             </>
-          ) : (
-            <ActivityIndicator size="large" color="#0000ff" />
-          )}
-          {/* </ImageBackground> */}
+          ) : null}
         </ScrollView>
       </SafeAreaView>
     </>
@@ -136,10 +158,10 @@ const styles = StyleSheet.create({
     top: 0,
     alignItems: 'center',
     width: '100%',
-    height: "100%",
-    aspectRatio: 1125/2436,
+    height: '100%',
+    aspectRatio: 1125 / 2436,
     resizeMode: 'cover',
-    opacity: .8, 
+    opacity: 0.8,
   },
   icon: {
     width: 100,
