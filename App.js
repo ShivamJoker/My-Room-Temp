@@ -16,6 +16,7 @@ import {
 import Zeroconf from 'react-native-zeroconf';
 import PushNotification from 'react-native-push-notification';
 import BackgroundFetch from 'react-native-background-fetch';
+import {getIP, setIP} from './src/storage.js';
 
 const zeroconf = new Zeroconf();
 
@@ -55,22 +56,68 @@ const App = () => {
       });
   }, [espURL]);
 
-  useEffect(() => {
-    console.log('refresh changed');
-
+  //find the esp using zeroconf
+  const findEsp = useCallback(() => {
     zeroconf.scan((type = 'http'), (protocol = 'tcp'), (domain = 'local.'));
 
-    zeroconf.on('start', () => console.log('The scan has started.'));
+    zeroconf.on('start', () =>
+      console.log('The scan has started.\n Finding esptemp'),
+    );
 
     zeroconf.on('resolved', e => {
       console.log(e);
       if (e.name === 'esptemp') {
         //this will give us the ip of the local device
         const URL = `http://${e.addresses[0]}:${e.port}`;
+        setIP(URL);
         espURL.current = URL;
         fetchTemp();
       }
     });
+  });
+
+  const init = async () => {
+    BackgroundFetch.configure(
+      {
+        minimumFetchInterval: 15, // <-- minutes (15 is minimum allowed)
+        // Android options
+        forceAlarmManager: false, // <-- Set true to bypass JobScheduler.
+        stopOnTerminate: false,
+        startOnBoot: true,
+        periodic: true,
+        enableHeadless: true,
+
+      },
+      async taskId => {
+        console.log('[js] Received background-fetch event: ', taskId);
+        // Required: Signal completion of your task to native code
+        // If you fail to do this, the OS can terminate your app
+        // or assign battery-blame for consuming too much background-time
+        BackgroundFetch.finish(taskId);
+      },
+      error => {
+        console.log('[js] RNBackgroundFetch failed to start');
+      },
+    );
+
+  };
+
+  useEffect(() => {
+    getIP().then(e => {
+      console.log(e);
+      espURL.current = e;
+
+      console.log(espURL.current);
+
+      if (!espURL.current) {
+        findEsp();
+      } else {
+        console.log('fetching temp');
+        fetchTemp();
+      }
+    });
+
+    init();
 
     PushNotification.configure({
       // (optional) Called when Token is generated (iOS and Android)
@@ -85,30 +132,6 @@ const App = () => {
       popInitialNotification: true,
       requestPermissions: false,
     });
-
-    // background sheduler
-    BackgroundFetch.configure(
-      {
-        minimumFetchInterval: 15, // <-- minutes (15 is minimum allowed)
-        // Android options
-        forceAlarmManager: false, // <-- Set true to bypass JobScheduler.
-        stopOnTerminate: false,
-        startOnBoot: true,
-        requiredNetworkType: BackgroundFetch.NETWORK_TYPE_NONE, // Default
-        requiresCharging: false, // Default
-        requiresDeviceIdle: false, // Default
-        requiresBatteryNotLow: false, // Default
-        requiresStorageNotLow: false, // Default
-      },
-      async taskId => {
-        console.log('[js] Received background-fetch event: ', taskId);
-        fetchTemp();
-        BackgroundFetch.finish(taskId);
-      },
-      error => {
-        console.log('[js] RNBackgroundFetch failed to start');
-      },
-    );
 
     return () => {
       zeroconf.removeAllListeners();
