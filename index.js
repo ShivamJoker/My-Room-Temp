@@ -8,7 +8,7 @@ import {name as appName} from './app.json';
 
 import BackgroundFetch from 'react-native-background-fetch';
 import PushNotification from 'react-native-push-notification';
-import {getIP} from './src/storage.js';
+import {getIP} from './src/utils/storage.js';
 
 let MyHeadlessTask = async event => {
   // Get task id from event {}:

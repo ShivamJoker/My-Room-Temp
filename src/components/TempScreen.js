@@ -16,7 +16,7 @@ import {
 import Zeroconf from 'react-native-zeroconf';
 import PushNotification from 'react-native-push-notification';
 import BackgroundFetch from 'react-native-background-fetch';
-import {getIP, setIP} from '../storage.js';
+import {getIP, setIP} from '../utils/storage.js';
 
 const zeroconf = new Zeroconf();
 
