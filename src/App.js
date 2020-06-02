@@ -7,6 +7,7 @@ import PurchaseScreen from './components/PurchaseScreen';
 
 
 const App = () => {
-  return <PurchaseScreen />;
+//   return <PurchaseScreen />;
+return null
 };
 export default App;

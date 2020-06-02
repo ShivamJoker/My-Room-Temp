@@ -8,8 +8,10 @@ import {name as appName} from './app.json';
 
 import BackgroundFetch from 'react-native-background-fetch';
 import PushNotification from 'react-native-push-notification';
-import {getIP} from './src/utils/storage.js';
+import {getIP, addTempData} from './src/utils/storage.js';
 
+
+//our background fetch 
 let MyHeadlessTask = async event => {
   // Get task id from event {}:
   let taskId = event.taskId;
@@ -17,14 +19,18 @@ let MyHeadlessTask = async event => {
   console.log('[BackgroundFetch HeadlessTask] start: ');
 
   const res = await fetch(await getIP());
-  const data = await res.json();
-  console.log(data);
+  // destructure object
+  const {temperature, humidity} = await res.json();
+  console.log(temperature, humidity);
+
+  //add it to database
+  await addTempData(temperature, humidity);
 
   //will also send local push when we get new data
   PushNotification.localNotification({
     ignoreInForeground: false,
     title: `Current Room Temp 🌡 ${data.temperature}℃`,
-    message: `Temperatue ${data.temperature}℃ Humidity ${data.humidity}%`, // (required)
+    message: `Temperatue ${temperature}℃ Humidity ${humidity}%`, // (required)
     playSound: false,
     number: 3,
   });
@@ -34,6 +40,7 @@ let MyHeadlessTask = async event => {
   // battery-blame for consuming too much time in background.
   BackgroundFetch.finish(taskId);
 };
+
 
 // Register your BackgroundFetch HeadlessTask
 BackgroundFetch.registerHeadlessTask(MyHeadlessTask);
