@@ -28,6 +28,8 @@ const dropTable = async () => {
   );
 };
 
+// look here for sqlite time formatting - https://sqlite.org/lang_datefunc.html
+
 const createTable = async () => {
   return await ExecuteQuery(
     `CREATE TABLE IF NOT EXISTS tempData(time DATETIME DEFAULT (datetime('now','localtime')) PRIMARY KEY, temperature REAL, humidity REAL)`,

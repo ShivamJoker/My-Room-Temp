@@ -125,7 +125,7 @@ const TempScreen = () => {
   //component goes here
   return (
     <>
-      <StatusBar translucent backgroundColor="transparent" />
+      <StatusBar translucent backgroundColor="rgba(0, 0, 0, .2)" barStyle="light-content"/>
       <SafeAreaView style={styles.container}>
         <ScrollView
           contentContainerStyle={styles.scrollView}

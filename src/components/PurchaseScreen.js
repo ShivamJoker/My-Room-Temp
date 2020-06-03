@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-import {View, Text, Platform, Button, Alert} from 'react-native';
+import {View, Text, Platform, Button, Alert, StyleSheet} from 'react-native';
 
 import RNIap, {
   purchaseErrorListener,
@@ -44,7 +44,7 @@ const PurchaseScreen = () => {
 
       purchaseError = purchaseErrorListener(error => {
         console.log('purchaseErrorListener', error);
-        Alert.alert('purchase error', JSON.stringify(error));
+        Alert.alert('purchase error', JSON.stringify(error.message));
       });
       //   const consumed = await RNIap.consumeAllItemsAndroid();
       //   console.log('consumed all items?', consumed);
@@ -80,10 +80,19 @@ const PurchaseScreen = () => {
   };
 
   return (
-    <View style={{position: "absolute", bottom: 40, width: "100%", height: 100}}>
+    <View style={styles.container}>
       <Button title="Go Premium" onPress={() => buyPremium()} />
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    width: "80%",
+    height: "50%",
+    maxHeight: 500,
+    backgroundColor: 'pink'
+  }
+})
 
 export default PurchaseScreen;

@@ -1,37 +1,40 @@
-import React from 'react';
-import {View, Text, Dimensions} from 'react-native';
+import React, {useState, useEffect} from 'react';
+import {View, Text, Dimensions, Modal, Button} from 'react-native';
 import {LineChart} from 'react-native-chart-kit';
+import PurchaseScreen from './PurchaseScreen';
 
-const screenWidth = Dimensions.get('window').width;
+const {width, height} = Dimensions.get('window');
 
 const ChartScreen = () => {
-  return (
 
+  return (
+    <>
       <LineChart
         data={{
-          labels: ['1', '3', '5', '7', '9', '11','13','15','17','19', '20', '22'],
+          labels: [
+            '1',
+            '3',
+            '5',
+            '7',
+            '9',
+            '11',
+            '13',
+            '15',
+            '17',
+            '19',
+            '20',
+            '22',
+          ],
           datasets: [
             {
               data: [
-                Math.random() * 50,
-                Math.random() * 50,
-                Math.random() * 50,
-                Math.random() * 50,
-                Math.random() * 50,
-                Math.random() * 50,
-                Math.random() * 50,
-                Math.random() * 50,
-                Math.random() * 50,
-                Math.random() * 50,
-                Math.random() * 50,
-                Math.random() * 50,
+                33,35,50,46,48,32,35,25,21,19
               ],
             },
           ],
         }}
-        width={Dimensions.get('window').width + 1} // from react-native
-        height={Dimensions.get('window').width}
-        
+        width={width + 1} // from react-native
+        height={width}
         yAxisSuffix="℃"
         segments={5}
         yAxisInterval={1} // optional, defaults to 1
@@ -40,7 +43,7 @@ const ChartScreen = () => {
           backgroundGradientFrom: '#fb8c00',
           backgroundGradientTo: '#ffa726',
           decimalPlaces: 1, // optional, defaults to 2dp
-   
+
           color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
           labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
 
@@ -52,11 +55,14 @@ const ChartScreen = () => {
         }}
         // bezier
         style={{
-        //   marginVertical: 8,
-            width: "100%"
+          //   marginVertical: 8,
+          width: '100%',
         }}
       />
-
+      
+        {/* <PurchaseScreen/> */}
+      
+    </>
   );
 };
 
