@@ -2,6 +2,7 @@ import React, {useState, useEffect} from 'react';
 import {View, Text, Dimensions, Modal, Button} from 'react-native';
 import {LineChart} from 'react-native-chart-kit';
 import PurchaseScreen from './PurchaseScreen';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const {width, height} = Dimensions.get('window');
 
@@ -9,6 +10,7 @@ const ChartScreen = () => {
 
   return (
     <>
+    <SafeAreaView>
       <LineChart
         data={{
           labels: [
@@ -62,6 +64,7 @@ const ChartScreen = () => {
       
         {/* <PurchaseScreen/> */}
       
+        </SafeAreaView>
     </>
   );
 };

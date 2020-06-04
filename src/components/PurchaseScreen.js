@@ -88,10 +88,12 @@ const PurchaseScreen = () => {
 
 const styles = StyleSheet.create({
   container: {
-    width: "80%",
-    height: "50%",
-    maxHeight: 500,
-    backgroundColor: 'pink'
+    // width: "80%",
+    // height: "50%",
+    // maxHeight: 500,
+    // backgroundColor: 'pink'
+    alignItems: "center",
+    justifyContent: "center"
   }
 })
 
