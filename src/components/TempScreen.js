@@ -31,7 +31,7 @@ const moonIcon = require('../../assets/images/icons/moon.png');
 const sunnyIcon = require('../../assets/images/icons/sunny.png');
 
 const TempScreen = () => {
-  const [tempResponse, setTempResponse] = useState(null);
+  const [tempResponse, setTempResponse] = useState({temperature: 100, humidity: 69});
   const [refreshing, setRefreshing] = useState(false);
   const espURL = useRef(null);
 
@@ -72,7 +72,7 @@ const TempScreen = () => {
       {
         minimumFetchInterval: 15, // <-- minutes (15 is minimum allowed)
         // Android options
-        forceAlarmManager: false, // <-- Set true to bypass JobScheduler.
+        forceAlarmManager: true, // <-- Set true to bypass JobScheduler.
         stopOnTerminate: false,
         startOnBoot: true,
         periodic: true,
@@ -89,6 +89,21 @@ const TempScreen = () => {
         console.log('[js] RNBackgroundFetch failed to start');
       },
     );
+
+     // Optional: Query the authorization status.
+     BackgroundFetch.status((status) => {
+      switch(status) {
+        case BackgroundFetch.STATUS_RESTRICTED:
+          console.log("BackgroundFetch restricted");
+          break;
+        case BackgroundFetch.STATUS_DENIED:
+          console.log("BackgroundFetch denied");
+          break;
+        case BackgroundFetch.STATUS_AVAILABLE:
+          console.log("BackgroundFetch is enabled");
+          break;
+      }
+    });
   };
 
   useEffect(() => {

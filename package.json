@@ -18,6 +18,7 @@
     "pouchdb-react-native": "^7.0.0-beta-1",
     "react": "16.11.0",
     "react-native": "^0.62.2",
+    "react-native-android-open-settings": "^1.3.0",
     "react-native-background-fetch": "^3.0.6",
     "react-native-chart-kit": "^5.6.0",
     "react-native-elements": "^2.0.1",

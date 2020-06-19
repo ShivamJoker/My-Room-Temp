@@ -13,6 +13,8 @@ import SettingsScreen from './components/SettingsScreen';
 
 const {width} = Dimensions.get('window');
 
+
+
 const RootStack = createStackNavigator();
 
 const Tab = createBottomTabNavigator();
@@ -23,8 +25,11 @@ const MainTabScreen = () => {
       initialRouteName="Home"
       tabBarOptions={{
         style: {
-          backgroundColor: '#ecf0f1',
-        },
+          backgroundColor: 'rgba(255,255,255,.88)',
+          position: 'absolute',
+          borderTopWidth: 0,
+          elevation: 0,
+        }
       }}
       screenOptions={({route}) => ({
         tabBarIcon: ({focused, color, size}) => {
@@ -53,25 +58,14 @@ const MainTabScreen = () => {
   );
 };
 
-function ModalScreen({navigation}) {
-  return (
-    <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-      <Text style={{fontSize: 30}}>This is a modal!</Text>
-      <Button onPress={() => navigation.goBack()} title="Dismiss" />
-    </View>
-  );
-}
 
 const App = () => {
-  // useEffect(() => {
-  //   console.log("index",pageIndex);
-  // }, [pageIndex]);
 
   return (
     <NavigationContainer>
       <RootStack.Navigator mode="modal" headerMode="none">
         <RootStack.Screen name="Main" component={MainTabScreen} />
-        <RootStack.Screen name="MyModal" component={PurchaseScreen} />
+        <RootStack.Screen name="PurchasePage" component={PurchaseScreen} />
       </RootStack.Navigator>
     </NavigationContainer>
   );
