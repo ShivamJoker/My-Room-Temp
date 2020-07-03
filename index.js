@@ -29,7 +29,7 @@ let MyHeadlessTask = async event => {
   //will also send local push when we get new data
   PushNotification.localNotification({
     ignoreInForeground: false,
-    title: `Current Room Temp 🌡 ${data.temperature}℃`,
+    title: `Current Room Temp 🌡 ${temperature}℃`,
     message: `Temperatue ${temperature}℃ Humidity ${humidity}%`, // (required)
     playSound: false,
     number: 3,

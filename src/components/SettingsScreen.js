@@ -1,8 +1,8 @@
 import React, {useState} from 'react';
-import {StyleSheet, Text, Switch, View, SafeAreaView} from 'react-native';
+import {StyleSheet,  Switch, View, SafeAreaView} from 'react-native';
 
 import {useNavigation} from '@react-navigation/native';
-import {Input, Icon, Slider, Divider, Button} from 'react-native-elements';
+import {Input, Icon, Slider, Text,Divider, Button} from 'react-native-elements';
 import AndroidOpenSettings from 'react-native-android-open-settings';
 
 import {minToHr} from '../utils/time';
@@ -11,6 +11,7 @@ const SettingsScreen = () => {
   const navigation = useNavigation();
   const [isNotificationEnabled, setIsNotificationEnabled] = useState(false);
   const [fetchInterval, setFetchInterval] = useState(60);
+  const [isPro, setIsPro] = useState(true);
 
   const toggleNotificationSwitch = () => {
     setIsNotificationEnabled(previousState => !previousState);
@@ -19,34 +20,42 @@ const SettingsScreen = () => {
   return (
     <SafeAreaView>
       <View style={styles.mainContainer}>
+        <Text>App Config</Text>
+        <Divider />
         <View style={styles.topContainer}>
           <Input
-            label={
-              <View style={styles.flexRow}>
-                <Text>Request URL </Text>
-                <Icon name="info" size={20} color="teal" />
-              </View>
-            }
-            placeholder="http://192.168.11.11/weather"
-            leftIcon={{type: 'MaterialIcons', name: 'link'}}
+            placeholder="Flespi Auth Token"
+            leftIcon={{type: 'MaterialIcons', name: 'device-hub'}}
             dataDetectorTypes="link"
           />
-          <Button title="Scan for EspTemp" type="outline" />
         </View>
 
         <Text>Room Temp Pro Features</Text>
         <Divider />
+        <View style={styles.spacedRow}>
+          <View>
+            <Text style={styles.infoText}>Background fetch</Text>
+            <Text>Get charts and notification</Text>
+          </View>
+          <Switch
+            thumbColor={isNotificationEnabled ? 'teal' : '#f4f3f4'}
+            onValueChange={toggleNotificationSwitch}
+            value={isNotificationEnabled}
+            disabled={!isPro}
+          />
+        </View>
         <View style={styles.spacedRow}>
           <Text style={styles.infoText}>Notification</Text>
           <Switch
             thumbColor={isNotificationEnabled ? 'teal' : '#f4f3f4'}
             onValueChange={toggleNotificationSwitch}
             value={isNotificationEnabled}
+            disabled={!isPro}
           />
         </View>
         <View style={{alignItems: 'stretch', justifyContent: 'center'}}>
           <View style={styles.spacedRow}>
-            <Text style={styles.infoText}>Fetch Data in</Text>
+            <Text style={styles.infoText}>Interval</Text>
             <Text style={styles.infoText}>
               {minToHr(fetchInterval)} {fetchInterval >= 60 ? 'Hr' : 'Min'}
             </Text>
@@ -60,6 +69,7 @@ const SettingsScreen = () => {
             step={30}
             animationType="spring"
             thumbTintColor="teal"
+            disabled={!isPro}
           />
         </View>
         <Button title="Send Feedback" type="outline" />

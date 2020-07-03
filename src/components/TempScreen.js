@@ -18,9 +18,14 @@ import PushNotification from 'react-native-push-notification';
 import BackgroundFetch from 'react-native-background-fetch';
 import {getIP, setIP} from '../utils/storage.js';
 
+//get width
+const {width} = Dimensions.get("window")
+
 const zeroconf = new Zeroconf();
 
 // all the images and icons here
+
+import HomeImg from "../../assets/images/home background.svg"
 
 const sunny = require('../../assets/images/sunny.jpg');
 const cloudy = require('../../assets/images/cloudy.jpg');
@@ -72,7 +77,7 @@ const TempScreen = () => {
       {
         minimumFetchInterval: 15, // <-- minutes (15 is minimum allowed)
         // Android options
-        forceAlarmManager: true, // <-- Set true to bypass JobScheduler.
+        forceAlarmManager: false, // <-- Set true to bypass JobScheduler.
         stopOnTerminate: false,
         startOnBoot: true,
         periodic: true,
@@ -140,7 +145,7 @@ const TempScreen = () => {
   //component goes here
   return (
     <>
-      <StatusBar  backgroundColor="rgba(0, 0, 0, .2)" barStyle="light-content"/>
+      <StatusBar  backgroundColor="rgba(0, 0, 0, .2)" translucent barStyle="light-content"/>
       <SafeAreaView style={styles.container}>
         <ScrollView
           contentContainerStyle={styles.scrollView}
@@ -151,7 +156,8 @@ const TempScreen = () => {
               progressViewOffset={20}
             />
           }>
-          <Image source={sunny} style={styles.bgImg} />
+          {/* <Image source={sunny} style={styles.bgImg} /> */}
+          <HomeImg width={width} height={width - 80} style={styles.bgImg}/>
 
           <Image style={styles.icon} source={sunnyIcon} />
           {tempResponse ? (
@@ -173,7 +179,7 @@ const TempScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'black',
+    backgroundColor: '#ffdb58',
   },
   scrollView: {
     alignItems: 'center',
@@ -200,20 +206,13 @@ const styles = StyleSheet.create({
   },
 
   bgImg: {
-    flex: 1,
     position: 'absolute',
-    top: 0,
-    alignItems: 'center',
-    width: '100%',
-    height: '100%',
-    aspectRatio: 1125 / 2436,
-    resizeMode: 'cover',
-    opacity: 0.8,
+    bottom: 30,
   },
   icon: {
     width: 100,
     height: 100,
-    marginTop: 70,
+    marginTop: 30,
     marginBottom: 20,
   },
 });

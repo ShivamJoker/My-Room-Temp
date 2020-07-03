@@ -43,7 +43,7 @@ export const addTempData = async (temperature, humidity) => {
   );
 };
 
-const logAllData = async () => {
+export const logAllData = async () => {
   const res = await ExecuteQuery(
     `select time, temperature, humidity from tempData`,
   );
@@ -55,10 +55,11 @@ const logAllData = async () => {
 const task = async () => {
   // await dropTable()
   await createTable()
-  await addTempData(102.2, 50.5);
+  // await addTempData(102.2, 50.5);
   logAllData();
 };
 task();
+
 
 export const setIP = async ip => {
   try {
