@@ -25,7 +25,7 @@ const MainTabScreen = () => {
       initialRouteName="Home"
       tabBarOptions={{
         style: {
-          backgroundColor: 'rgba(255,255,255,.88)',
+          backgroundColor: 'rgba(255,255,255,1)',
           position: 'absolute',
           borderTopWidth: 0,
           elevation: 0,
@@ -43,7 +43,7 @@ const MainTabScreen = () => {
               iconName = 'chart-line';
               break;
             case 'Settings':
-              iconName = 'settings';
+              iconName = 'cog';
               break;
           }
 

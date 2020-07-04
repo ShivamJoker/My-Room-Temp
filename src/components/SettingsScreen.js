@@ -95,6 +95,7 @@ export default SettingsScreen;
 const styles = StyleSheet.create({
   mainContainer: {
     margin: 20,
+    marginTop: 30
   },
   topContainer: {marginBottom: 20},
   infoText: {

@@ -4,41 +4,62 @@ import {
   StyleSheet,
   ScrollView,
   View,
+  Animated,
   Dimensions,
   Text,
   RefreshControl,
   StatusBar,
-  ActivityIndicator,
-  ImageBackground,
-  Image,
+  Easing,
 } from 'react-native';
 
+// import {Icon} from 'react-native-elements';
+import Icon from 'react-native-vector-icons/Ionicons';
+
+import LinearGradient from 'react-native-linear-gradient';
 import Zeroconf from 'react-native-zeroconf';
 import PushNotification from 'react-native-push-notification';
 import BackgroundFetch from 'react-native-background-fetch';
 import {getIP, setIP} from '../utils/storage.js';
+import {tempIcon} from '../utils/time.js';
+import {getGradient} from '../utils/tempScreen.js';
 
 //get width
-const {width} = Dimensions.get("window")
+const {width, height} = Dimensions.get('window');
 
 const zeroconf = new Zeroconf();
 
 // all the images and icons here
 
-import HomeImg from "../../assets/images/home background.svg"
-
-const sunny = require('../../assets/images/sunny.jpg');
-const cloudy = require('../../assets/images/cloudy.jpg');
-const night = require('../../assets/images/night.jpg');
-
-const cloudIcon = require('../../assets/images/icons/cloud.png');
-const moonIcon = require('../../assets/images/icons/moon.png');
-const sunnyIcon = require('../../assets/images/icons/sunny.png');
+import HomeImg from '../../assets/images/home background.svg';
 
 const TempScreen = () => {
-  const [tempResponse, setTempResponse] = useState({temperature: 100, humidity: 69});
+  const [tempResponse, setTempResponse] = useState({
+    temperature: 100,
+    humidity: 69,
+  });
   const [refreshing, setRefreshing] = useState(false);
   const espURL = useRef(null);
+
+  const anim = useRef(new Animated.Value(0));
+
+  const spin = useRef(
+    anim.current.interpolate({
+      inputRange: [0, 1],
+      outputRange: ['0deg', '360deg'],
+    }),
+  );
+
+  const spinAnimStart = useCallback(() => {
+    Animated.loop(
+      // increase size
+      Animated.timing(anim.current, {
+        toValue: 1,
+        useNativeDriver: true,
+        easing: Easing.linear,
+        duration: 5000,
+      }),
+    ).start();
+  });
 
   const fetchTemp = useCallback(() => {
     setRefreshing(true);
@@ -95,23 +116,27 @@ const TempScreen = () => {
       },
     );
 
-     // Optional: Query the authorization status.
-     BackgroundFetch.status((status) => {
-      switch(status) {
+    // Optional: Query the authorization status.
+    BackgroundFetch.status(status => {
+      switch (status) {
         case BackgroundFetch.STATUS_RESTRICTED:
-          console.log("BackgroundFetch restricted");
+          console.log('BackgroundFetch restricted');
           break;
         case BackgroundFetch.STATUS_DENIED:
-          console.log("BackgroundFetch denied");
+          console.log('BackgroundFetch denied');
           break;
         case BackgroundFetch.STATUS_AVAILABLE:
-          console.log("BackgroundFetch is enabled");
+          console.log('BackgroundFetch is enabled');
           break;
       }
     });
   };
 
   useEffect(() => {
+    //start the animation
+
+    spinAnimStart();
+
     getIP().then(e => {
       console.log(e);
       espURL.current = e;
@@ -126,6 +151,8 @@ const TempScreen = () => {
       }
     });
 
+    // makes the sequence loop
+
     init();
 
     PushNotification.configure({
@@ -139,13 +166,19 @@ const TempScreen = () => {
 
     return () => {
       zeroconf.removeAllListeners();
+      //stop the animation
+      // spinAnim.stop();
     };
   }, []);
 
   //component goes here
   return (
     <>
-      <StatusBar  backgroundColor="rgba(0, 0, 0, .2)" translucent barStyle="light-content"/>
+      <StatusBar
+        backgroundColor="rgba(0, 0, 0, .2)"
+        translucent
+        barStyle="light-content"
+      />
       <SafeAreaView style={styles.container}>
         <ScrollView
           contentContainerStyle={styles.scrollView}
@@ -156,20 +189,24 @@ const TempScreen = () => {
               progressViewOffset={20}
             />
           }>
-          {/* <Image source={sunny} style={styles.bgImg} /> */}
-          <HomeImg width={width} height={width - 80} style={styles.bgImg}/>
+          <LinearGradient colors={getGradient()} style={styles.bgGradient} />
+          <HomeImg width={width + 2} height={width - 10} style={styles.bgImg} />
+          <View style={styles.innerContainer}>
+            <Animated.View style={{transform: [{rotate: spin.current}]}}>
+              <Icon name={tempIcon()} size={100} color="#fff" />
+            </Animated.View>
 
-          <Image style={styles.icon} source={sunnyIcon} />
-          {tempResponse ? (
-            <>
-              <Text style={styles.tempTxt}>
-                {Math.round(tempResponse.temperature)}°
-              </Text>
-              <Text style={styles.humidityTxt}>
-                Humidity {Math.round(tempResponse.humidity)}%
-              </Text>
-            </>
-          ) : null}
+            {tempResponse ? (
+              <>
+                <Text style={styles.tempTxt}>
+                  {Math.round(tempResponse.temperature)}°
+                </Text>
+                <Text style={styles.humidityTxt}>
+                  Humidity {Math.round(tempResponse.humidity)}%
+                </Text>
+              </>
+            ) : null}
+          </View>
         </ScrollView>
       </SafeAreaView>
     </>
@@ -179,14 +216,21 @@ const TempScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#ffdb58',
+    // backgroundColor: 'orange',
+  },
+  innerContainer: {
+    height: '50%',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   scrollView: {
     alignItems: 'center',
     // justifyContent: 'center',
     height: '100%',
+    paddingTop: 50,
   },
   tempTxt: {
+    marginTop: 20,
     fontSize: 100,
     fontFamily: 'Rubik-Light',
     fontWeight: '300',
@@ -207,13 +251,19 @@ const styles = StyleSheet.create({
 
   bgImg: {
     position: 'absolute',
-    bottom: 30,
+    bottom: 0,
+  },
+  bgGradient: {
+    height: height,
+    width: width,
+    zIndex: -1,
+    position: 'absolute',
   },
   icon: {
     width: 100,
     height: 100,
-    marginTop: 30,
-    marginBottom: 20,
+    // marginTop: 50,
+    // marginBottom: 20,
   },
 });
 
