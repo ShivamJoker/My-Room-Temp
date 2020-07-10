@@ -33,12 +33,13 @@ const zeroconf = new Zeroconf();
 import HomeImg from '../../assets/images/home background.svg';
 
 const TempScreen = () => {
+  // dummy temp data
   const [tempResponse, setTempResponse] = useState({
     temperature: 100,
     humidity: 69,
   });
+
   const [refreshing, setRefreshing] = useState(false);
-  const espURL = useRef(null);
 
   const anim = useRef(new Animated.Value(0));
 
@@ -61,9 +62,10 @@ const TempScreen = () => {
     ).start();
   });
 
-  const fetchTemp = useCallback(() => {
-    setRefreshing(true);
-    fetch(espURL.current)
+  const fetchTemp = useCallback((URL) => {
+    setRefreshing(true); //set the refreshing to true
+
+    fetch(URL)
       .then(response => response.json())
       .then(data => {
         console.log(data);
@@ -71,10 +73,10 @@ const TempScreen = () => {
         //we will set the refresing false after the data is fetched
         setRefreshing(false);
       });
-  }, [espURL]);
+  });
 
   //find the esp using zeroconf
-  const findEsp = useCallback(() => {
+  const findEspAndFetchData = useCallback(() => {
     zeroconf.scan((type = 'http'), (protocol = 'tcp'), (domain = 'local.'));
 
     zeroconf.on('start', () =>
@@ -86,9 +88,8 @@ const TempScreen = () => {
       if (e.name === 'esptemp') {
         //this will give us the ip of the local device
         const URL = `http://${e.addresses[0]}:${e.port}`;
-        setIP(URL);
-        espURL.current = URL;
-        fetchTemp();
+
+        fetchTemp(URL);
       }
     });
   });
@@ -135,21 +136,9 @@ const TempScreen = () => {
   useEffect(() => {
     //start the animation
 
-    spinAnimStart();
+    // spinAnimStart();
 
-    getIP().then(e => {
-      console.log(e);
-      espURL.current = e;
-
-      console.log(espURL.current);
-
-      if (!espURL.current) {
-        findEsp();
-      } else {
-        console.log('fetching temp');
-        fetchTemp();
-      }
-    });
+    findEspAndFetchData();
 
     // makes the sequence loop
 
@@ -196,16 +185,14 @@ const TempScreen = () => {
               <Icon name={tempIcon()} size={100} color="#fff" />
             </Animated.View>
 
-            {tempResponse ? (
-              <>
-                <Text style={styles.tempTxt}>
-                  {Math.round(tempResponse.temperature)}°
-                </Text>
-                <Text style={styles.humidityTxt}>
-                  Humidity {Math.round(tempResponse.humidity)}%
-                </Text>
-              </>
-            ) : null}
+            <>
+              <Text style={styles.tempTxt}>
+                {Math.round(tempResponse.temperature)}°
+              </Text>
+              <Text style={styles.humidityTxt}>
+                Humidity {Math.round(tempResponse.humidity)}%
+              </Text>
+            </>
           </View>
         </ScrollView>
       </SafeAreaView>

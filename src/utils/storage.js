@@ -1,4 +1,4 @@
-import AsyncStorage from '@react-native-community/async-storage';
+
 import SQLite from 'react-native-sqlite-2';
 
 const db = SQLite.openDatabase('main.db', '1.0', '', 1);
@@ -43,7 +43,7 @@ export const addTempData = async (temperature, humidity) => {
   );
 };
 
-export const logAllData = async () => {
+export const logAllTempData = async () => {
   const res = await ExecuteQuery(
     `select time, temperature, humidity from tempData`,
   );
@@ -52,31 +52,17 @@ export const logAllData = async () => {
   });
 };
 
+export const setMQTTAuthToken = async(val=>{
+
+})
+
 const task = async () => {
   // await dropTable()
   await createTable()
   // await addTempData(102.2, 50.5);
-  logAllData();
+  logAllTempData();
 };
 task();
 
 
-export const setIP = async ip => {
-  try {
-    await AsyncStorage.setItem('@espip', ip);
-  } catch (e) {
-    console.log(e);
-  }
-};
 
-export const getIP = async () => {
-  try {
-    const value = await AsyncStorage.getItem('@espip');
-    if (value !== null) {
-      return value;
-    }
-  } catch (e) {
-    return null;
-    console.log(e);
-  }
-};

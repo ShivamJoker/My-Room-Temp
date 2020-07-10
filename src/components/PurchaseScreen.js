@@ -1,5 +1,13 @@
 import React, {useEffect} from 'react';
-import {View, Text, Platform, Button, Alert, StyleSheet} from 'react-native';
+import {
+  View,
+  Text,
+  Platform,
+  SafeAreaView,
+  Button,
+  Alert,
+  StyleSheet,
+} from 'react-native';
 
 import RNIap, {
   purchaseErrorListener,
@@ -24,7 +32,7 @@ const PurchaseScreen = () => {
       console.log('Products', products[0].title);
 
       const restore = await RNIap.getAvailablePurchases();
-      console.log("your item was",restore);
+      console.log('your item was', restore);
 
       purchaseUpdate = purchaseUpdatedListener(async purchase => {
         const receipt = purchase.transactionReceipt;
@@ -80,21 +88,21 @@ const PurchaseScreen = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <Button title="Go Premium" onPress={() => buyPremium()} />
-    </View>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     // width: "80%",
-    // height: "50%",
+    height: '50%',
     // maxHeight: 500,
     // backgroundColor: 'pink'
-    alignItems: "center",
-    justifyContent: "center"
-  }
-})
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});
 
 export default PurchaseScreen;
